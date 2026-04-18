@@ -44,5 +44,5 @@ class LinearRegression(object):
             pred_labels (np.array): labels of shape (N,)
         """
         test_data_bias = append_bias_term(test_data)
-        pred_labels= test_data_bias @ self.w
+        pred_labels = test_data_bias @ self.w
         return pred_labels
