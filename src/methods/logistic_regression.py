@@ -34,16 +34,16 @@ class LogisticRegression(object):
         """
         training_data_bias = append_bias_term(training_data)
         one_hot_labels = label_to_onehot(training_labels)
-        self.w = np.zeros((len(training_data_bias[0]),len(one_hot_labels[0])))
+        self.w = np.zeros((len(training_data_bias[0]), len(one_hot_labels[0])))
 
         for i in range (self.max_iters):
             self.w = self.w - self.lr * training_data_bias.T @ (self.softmax(training_data_bias @ self.w) - one_hot_labels)
 
-        pred_labels=onehot_to_label(self.softmax(training_data_bias@self.w))
+        pred_labels = onehot_to_label(self.softmax(training_data_bias@self.w))
         return pred_labels
     
-    def softmax (Z):
-        return np.exp(Z)/np.sum(np.exp(Z),axis = 1,keepdims=True)
+    def softmax (self, Z):
+        return np.exp(Z) / np.sum(np.exp(Z),axis = 1,keepdims=True)
 
     def predict(self, test_data):
         """

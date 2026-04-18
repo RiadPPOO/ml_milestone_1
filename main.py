@@ -54,8 +54,7 @@ def main(args):
         pass
 
     elif args.method == "logistic_regression":
-        ### WRITE YOUR CODE HERE
-        pass
+        method_obj = LogisticRegression(lr=args.lr, max_iters=args.max_iters)        
 
     elif args.method == "linear_regression":
         method_obj = LinearRegression()
