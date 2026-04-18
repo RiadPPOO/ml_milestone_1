@@ -1,4 +1,6 @@
 import numpy as np
+from src.utils import append_bias_term
+
 
 
 class LinearRegression(object):
@@ -27,7 +29,7 @@ class LinearRegression(object):
         Returns:
             pred_labels (np.array): target of shape (N,)
         """
-        training_data_bias = np.concatenate((np.ones((len(training_labels),1)), training_data), axis=1)
+        training_data_bias = append_bias_term(training_data)
         self.w = np.linalg.inv(training_data_bias.T @ training_data_bias) @ training_data_bias.T @ training_labels
         pred_labels = training_data_bias @ self.w
         return pred_labels
@@ -41,6 +43,6 @@ class LinearRegression(object):
         Returns:
             pred_labels (np.array): labels of shape (N,)
         """
-        test_data_bias = np.concatenate((np.ones((len(test_data),1)),test_data), axis=1)
+        test_data_bias = append_bias_term(test_data)
         pred_labels= test_data_bias @ self.w
         return pred_labels

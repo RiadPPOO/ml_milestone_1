@@ -1,4 +1,5 @@
 import numpy as np
+from src.utils import append_bias_term
 
 from ..utils import get_n_classes, label_to_onehot, onehot_to_label
 
@@ -19,6 +20,7 @@ class LogisticRegression(object):
         """
         self.lr = lr
         self.max_iters = max_iters
+        self.w = None
 
     def fit(self, training_data, training_labels):
         """
@@ -30,12 +32,18 @@ class LogisticRegression(object):
         Returns:
             pred_labels (np.array): target of shape (N,)
         """
-        ##
-        ###
-        #### WRITE YOUR CODE HERE!
-        ###
-        ##
+        training_data_bias = append_bias_term(training_data)
+        one_hot_labels = label_to_onehot(training_labels)
+        self.w = np.zeros((len(training_data_bias[0]),len(one_hot_labels[0])))
+
+        for i in range (self.max_iters):
+            self.w = self.w - self.lr * training_data_bias.T @ (self.softmax(training_data_bias @ self.w) - one_hot_labels)
+
+        pred_labels=onehot_to_label(self.softmax(training_data_bias@self.w))
         return pred_labels
+    
+    def softmax (Z):
+        return np.exp(Z)/np.sum(np.exp(Z),axis = 1,keepdims=True)
 
     def predict(self, test_data):
         """
@@ -46,9 +54,6 @@ class LogisticRegression(object):
         Returns:
             pred_labels (np.array): labels of shape (N,)
         """
-        ##
-        ###
-        #### WRITE YOUR CODE HERE!
-        ###
-        ##
+        test_data_bias = append_bias_term(test_data)
+        pred_labels = onehot_to_label(self.softmax(test_data_bias@self.w))
         return pred_labels
