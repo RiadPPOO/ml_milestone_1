@@ -12,6 +12,7 @@ class KNN(object):
         """
         self.k = k
         self.task_kind = task_kind
+        self.w = None
 
     def fit(self, training_data, training_labels):
         """
@@ -29,11 +30,11 @@ class KNN(object):
             pred_labels (np.array): labels of shape (N,)
         """
 
-        ##
-        ###
-        #### YOUR CODE HERE!
-        ###
-        ##
+        self.training_data = training_data 
+        self.training_labels = training_labels
+
+        pred_labels = self.predict(training_data)
+        
         return pred_labels
 
     def predict(self, test_data):
@@ -45,9 +46,19 @@ class KNN(object):
         Returns:
             test_labels (np.array): labels of shape (N,)
         """
-        ##
-        ###
-        #### YOUR CODE HERE!
-        ###
-        ##
+
+        N_test = test_data.shape[0]
+        test_labels = np.zeros(N_test)
+
+        for i in range(N_test): 
+            distances = np.sqrt(np.sum(np.square(self.training_data - test_data[i]), axis=1))
+            sorted_indices = np.argsort(distances)
+            k_nearest_indices = sorted_indices[:self.k]
+            k_nearest_labels = self.training_labels[k_nearest_indices]
+
+            if self.task_kind == "classification" :
+                test_labels[i] = np.bincount(k_nearest_labels.astype(int)).argmax()
+            elif self.task_kind == "regression" :
+                test_labels[i] = np.mean(k_nearest_labels)
+
         return test_labels
