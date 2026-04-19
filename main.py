@@ -29,19 +29,46 @@ def main(args):
 
     feature_data = np.load(dataset_path, allow_pickle=True)
     train_features, test_features, train_labels_reg, test_labels_reg, train_labels_classif, test_labels_classif = (
-        feature_data['xtrain'],feature_data['xtest'],feature_data['ytrainreg'],
-        feature_data['ytestreg'],feature_data['ytrainclassif'],feature_data['ytestclassif']
+        feature_data['xtrain'],
+        feature_data['xtest'],
+        feature_data['ytrainreg'],
+        feature_data['ytestreg'],
+        feature_data['ytrainclassif'],
+        feature_data['ytestclassif']
     )
+
+    print(f"[Data] Train: {train_features.shape} | Test: {test_features.shape}")
 
     ## 2. Then we must prepare it. This is where you can create a validation set,
     #  normalize, add bias, etc.
 
     # Make a validation set (it can overwrite xtest, ytest)
     if not args.test:
-        ### WRITE YOUR CODE HERE
-        pass
+         # 80/20 split on the training data, fixed seed for reproducibility
+        N_train = train_features.shape[0]
+        indices = np.random.permutation(N_train)
+        split = int(0.8 * N_train)
+        tr_idx, val_idx = indices[:split], indices[split:]
 
-    ### WRITE YOUR CODE HERE to do any other data processing
+        # Validation set replaces the test set for evaluation
+        test_features = train_features[val_idx]
+        test_labels_reg = train_labels_reg[val_idx]
+        test_labels_classif = train_labels_classif[val_idx]
+
+        train_features = train_features[tr_idx]
+        train_labels_reg = train_labels_reg[tr_idx]
+        train_labels_classif = train_labels_classif[tr_idx]
+
+        print(f"[Split] Validation mode: train={train_features.shape[0]}, val={test_features.shape[0]}")
+    else:
+        print(f"[Split] Test mode: train={train_features.shape[0]}, test={test_features.shape[0]}")
+
+    # Feature normalization: mean/std computed on TRAIN only 
+    means = np.mean(train_features, axis=0, keepdims=True)
+    stds = np.std(train_features, axis=0, keepdims=True)
+    stds[stds == 0] = 1.0
+    train_features = normalize_fn(train_features, means, stds)
+    test_features = normalize_fn(test_features, means, stds)
 
     ## 3. Initialize the method you want to use.
 
@@ -98,7 +125,6 @@ def main(args):
     else:
         raise ValueError(f"Unknown task: {args.task}")
 
-    ### WRITE YOUR CODE HERE if you want to add other outputs, visualization, etc.
 
 
 if __name__ == "__main__":
