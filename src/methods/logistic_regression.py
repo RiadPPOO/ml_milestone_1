@@ -43,7 +43,10 @@ class LogisticRegression(object):
         return pred_labels
     
     def softmax (self, Z):
-        return np.exp(Z) / np.sum(np.exp(Z),axis = 1,keepdims=True)
+        Z_stable = Z - np.max(Z, axis=1, keepdims=True)
+        exp_Z = np.exp(Z_stable)
+        return exp_Z / np.sum(exp_Z, axis=1, keepdims=True)
+
 
     def predict(self, test_data):
         """
