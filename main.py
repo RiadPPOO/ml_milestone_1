@@ -77,7 +77,7 @@ def main(args):
         method_obj = DummyClassifier(arg1=1, arg2=2)
 
     elif args.method == "knn":
-        method_obj = KNN(k=args.K, task_kind=args.task)
+        method_obj = KNN(k=args.K, task_kind=args.task, distance=args.distance)
 
     elif args.method == "logistic_regression":
         method_obj = LogisticRegression(lr=args.lr, max_iters=args.max_iters)        
@@ -170,6 +170,12 @@ if __name__ == "__main__":
         action="store_true",
         help="train on whole training data and evaluate on the test data, "
              "otherwise use a validation set",
+    )
+    parser.add_argument(
+        "--distance",
+        type=str,
+        default="l2",
+        help="distance function for KNN: l2 (Euclidean) or l1 (Manhattan)",
     )
     # Feel free to add more arguments here if you need!
 

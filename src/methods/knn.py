@@ -6,12 +6,13 @@ class KNN(object):
     kNN classifier object.
     """
 
-    def __init__(self, k=1, task_kind="classification"):
+    def __init__(self, k=1, task_kind="classification", distance="l2"):
         """
         Call set_arguments function of this class.
         """
         self.k = k
         self.task_kind = task_kind
+        self.distance = distance
         self.w = None
 
     def fit(self, training_data, training_labels):
@@ -51,7 +52,13 @@ class KNN(object):
         test_labels = np.zeros(N_test)
 
         for i in range(N_test): 
-            distances = np.sqrt(np.sum(np.square(self.training_data - test_data[i]), axis=1))
+            if self.distance == "l2":
+                distances = np.sqrt(np.sum(np.square(self.training_data - test_data[i]), axis=1))
+            elif self.distance == "l1":
+                distances = np.sum(np.abs(self.training_data - test_data[i]), axis=1)
+            else:
+                raise ValueError(f"Unknown distance: {self.distance}")
+            
             sorted_indices = np.argsort(distances)
             k_nearest_indices = sorted_indices[:self.k]
             k_nearest_labels = self.training_labels[k_nearest_indices]
@@ -60,5 +67,7 @@ class KNN(object):
                 test_labels[i] = np.bincount(k_nearest_labels.astype(int)).argmax()
             elif self.task_kind == "regression" :
                 test_labels[i] = np.mean(k_nearest_labels)
+            else:
+                raise ValueError(f"Unknown task_kind: {self.task_kind}")
 
         return test_labels
